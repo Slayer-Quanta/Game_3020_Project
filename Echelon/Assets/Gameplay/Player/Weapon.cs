@@ -1,26 +1,33 @@
 using System;
 using System.Collections;
+using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using static Unity.Mathematics.math;
 
 public class Weapon : MonoBehaviour
 {
-
+    [Header("Weapon Settings")]
     public bool isShooting, readyToFire;
     bool allowReset = true;
     public float shootingDelay = 2f;
-
     public int bulletsPerBurst = 3;
     public int currentBurst;
-
     public float spreadIntensity;
 
+    [Header("Bullet Settings")]
     public GameObject bulletPrefab;
     public Transform bulletSpawn;
     public float bulletVelocity = 30;
     public float bulletPrefabLifeTime = 3f;
 
+    [Header("Effects")]
     public GameObject muzzleflash;
     private Animator animator;
+
+    private Unity.Mathematics.Random mathRandom;
+    private InputSystem_Actions inputActions;
+
     public enum ShootingMode
     {
         Single,
@@ -29,78 +36,88 @@ public class Weapon : MonoBehaviour
     }
     public ShootingMode shootingMode;
 
-    private void Awake()
+    void Awake()
     {
+        inputActions = new InputSystem_Actions();
         readyToFire = true;
         currentBurst = bulletsPerBurst;
         animator = GetComponent<Animator>();
+        mathRandom = new Unity.Mathematics.Random((uint)UnityEngine.Random.Range(1, 100000));
     }
 
-    // Update is called once per frame
+    void OnEnable()
+    {
+        inputActions.Player.Enable();
+    }
+
+    void OnDisable()
+    {
+        inputActions.Player.Disable();
+    }
+
     void Update()
     {
-        if (shootingMode == ShootingMode.Automatic)
-        {
-            isShooting = Input.GetKey(KeyCode.Mouse0);
-        }
-        else if (shootingMode == ShootingMode.Single ||
-            shootingMode == ShootingMode.Burst)
-        { 
-          isShooting = Input.GetKeyDown(KeyCode.Mouse0);
-        }
+        HandleShooting();
 
-    if (readyToFire && isShooting)
+        if (readyToFire && isShooting)
         {
             currentBurst = bulletsPerBurst;
             FireWeapon();
         }
-        
+    }
+
+    void HandleShooting()
+    {
+        if (shootingMode == ShootingMode.Automatic)
+        {
+            isShooting = inputActions.Player.Attack.IsPressed();
+        }
+        else if (shootingMode == ShootingMode.Single || shootingMode == ShootingMode.Burst)
+        {
+            isShooting = inputActions.Player.Attack.WasPressedThisFrame();
+        }
     }
 
     private void FireWeapon()
     {
-
-      muzzleflash.GetComponent<ParticleSystem>().Play();
-
+        muzzleflash.GetComponent<ParticleSystem>().Play();
         animator.SetTrigger("Recoil");
-
-        AudioManager.Instance.SMGsound.Play();
+        //AudioManager.Instance.SMGsound.Play();
 
         readyToFire = false;
-        Vector3 shootingDirection = CalculateDirectionAndSpread().normalized;
+        float3 shootingDirection = normalize(CalculateDirectionAndSpread());
 
         GameObject bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
-
-        bullet.transform.forward= shootingDirection;
-
+        bullet.transform.forward = shootingDirection;
         bullet.GetComponent<Rigidbody>().AddForce(shootingDirection * bulletVelocity, ForceMode.Impulse);
 
         StartCoroutine(DestroyBulletAfterTime(bullet, bulletPrefabLifeTime));
-        
+
         if (allowReset)
         {
             Invoke("ResetShot", shootingDelay);
             allowReset = false;
         }
 
-        if (shootingMode == ShootingMode.Burst && currentBurst > 1 )
+        if (shootingMode == ShootingMode.Burst && currentBurst > 1)
         {
             currentBurst--;
             Invoke("FireWeapon", shootingDelay);
         }
     }
+
     private void ResetShot()
     {
         readyToFire = true;
         allowReset = true;
     }
 
-    public Vector3 CalculateDirectionAndSpread()
+    public float3 CalculateDirectionAndSpread()
     {
-        Ray ray = Camera.main.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
+        Ray ray = Camera.main.ViewportPointToRay(new float3(0.5f, 0.5f, 0));
         RaycastHit hit;
 
-        Vector3 targetpoint;
+        float3 targetpoint;
         if (Physics.Raycast(ray, out hit))
         {
             targetpoint = hit.point;
@@ -110,16 +127,16 @@ public class Weapon : MonoBehaviour
             targetpoint = ray.GetPoint(100);
         }
 
-        Vector3 direction = targetpoint - bulletSpawn.position;
-        float x = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
-        float y = UnityEngine.Random.Range(-spreadIntensity, spreadIntensity);
+        float3 direction = targetpoint - (float3)bulletSpawn.position;
+        float x = mathRandom.NextFloat(-spreadIntensity, spreadIntensity);
+        float y = mathRandom.NextFloat(-spreadIntensity, spreadIntensity);
 
-        return direction + new Vector3(x, y, 0);
+        return direction + new float3(x, y, 0);
     }
 
     private IEnumerator DestroyBulletAfterTime(GameObject bullet, float delay)
     {
         yield return new WaitForSeconds(delay);
-        Destroy (bullet);
+        Destroy(bullet);
     }
 }

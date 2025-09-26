@@ -817,149 +817,6 @@ MonoBehaviour:
   bulletPrefabLifeTime: 3
   muzzleflash: {fileID: 0}
   shootingMode: 2
---- !u!1 &619179908
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 619179911}
-  - component: {fileID: 619179910}
-  - component: {fileID: 619179909}
-  m_Layer: 0
-  m_Name: SoundManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!82 &619179909
-AudioSource:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 619179908}
-  m_Enabled: 1
-  serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 0}
-  m_Resource: {fileID: 8300000, guid: cac16d44bbaf704419256f2d9a7aed24, type: 3}
-  m_PlayOnAwake: 0
-  m_Volume: 0.529
-  m_Pitch: 1
-  Loop: 0
-  Mute: 0
-  Spatialize: 0
-  SpatializePostEffects: 0
-  Priority: 128
-  DopplerLevel: 1
-  MinDistance: 1
-  MaxDistance: 500
-  Pan2D: 0
-  rolloffMode: 0
-  BypassEffects: 0
-  BypassListenerEffects: 0
-  BypassReverbZones: 0
-  rolloffCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    - serializedVersion: 3
-      time: 1
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  panLevelCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  spreadCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 0
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
-  reverbZoneMixCustomCurve:
-    serializedVersion: 2
-    m_Curve:
-    - serializedVersion: 3
-      time: 0
-      value: 1
-      inSlope: 0
-      outSlope: 0
-      tangentMode: 0
-      weightedMode: 0
-      inWeight: 0.33333334
-      outWeight: 0.33333334
-    m_PreInfinity: 2
-    m_PostInfinity: 2
-    m_RotationOrder: 4
---- !u!114 &619179910
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 619179908}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4897776df62d4d94aae3522121a824a4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: '::'
-  SMGsound: {fileID: 619179909}
---- !u!4 &619179911
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 619179908}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.52162, y: 3.76295, z: 1.13864}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &649382301
 GameObject:
   m_ObjectHideFlags: 0
@@ -1137,7 +994,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: e99dd5eb05926c64ebdab6c24c54e361, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1692,6 +1549,11 @@ MonoBehaviour:
   groundMask:
     serializedVersion: 2
     m_Bits: 8
+  dashForce: 80
+  dashDuration: 0.5
+  momentumDecay: 5
+  jetpackBoostForce: 15
+  jetpackHorizontalBoost: 0.5
 --- !u!114 &1234022115
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1704,9 +1566,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7f9e4d88ddab48d4aa4fe7a9a200bd82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MouseMovement
-  mouseSensitivity: 500
-  topClamp: -90
-  bottomClamp: 90
+  mouseSensitivity: 1.2
+  topClamp: 90
+  bottomClamp: -90
 --- !u!1001 &1342255593
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2346,11 +2208,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1640040318139574952, guid: 7e173e8e10be4794ba5e613a22cb3c9d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 1.394
+      value: 1.297
       objectReference: {fileID: 0}
     - target: {fileID: 1640040318139574952, guid: 7e173e8e10be4794ba5e613a22cb3c9d, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.786
+      value: 0.846
       objectReference: {fileID: 0}
     - target: {fileID: 1640040318139574952, guid: 7e173e8e10be4794ba5e613a22cb3c9d, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7210,4 +7072,3 @@ SceneRoots:
   - {fileID: 1069604170}
   - {fileID: 1465946401}
   - {fileID: 276174208}
-  - {fileID: 619179911}
