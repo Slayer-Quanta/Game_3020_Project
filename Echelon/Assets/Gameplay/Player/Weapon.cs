@@ -25,6 +25,9 @@ public class Weapon : MonoBehaviour
     public GameObject muzzleflash;
     private Animator animator;
 
+    [Header("Audio Settings")]
+    public string[] weaponSoundNames = { "SMG Fire", "Shotgun Fire" }; 
+
     private Unity.Mathematics.Random mathRandom;
     private InputSystem_Actions inputActions;
 
@@ -34,6 +37,7 @@ public class Weapon : MonoBehaviour
         Burst,
         Automatic
     }
+    //we have 3 firing modes that can be set for each gun or modified in the inspector for an existing one
     public ShootingMode shootingMode;
 
     void Awake()
@@ -81,8 +85,15 @@ public class Weapon : MonoBehaviour
     private void FireWeapon()
     {
         muzzleflash.GetComponent<ParticleSystem>().Play();
+        //this triggers the well trigger in the animation parameters playing the effect of idle to recoil 
         animator.SetTrigger("Recoil");
-        //AudioManager.Instance.SMGsound.Play();
+
+        // plays the two weapons sound when set on the inspector going by two names set for weaponSoundNames
+        if (weaponSoundNames.Length > 0 && AudioManager.instance != null)
+        {
+            string randomSound = weaponSoundNames[UnityEngine.Random.Range(0, weaponSoundNames.Length)];
+            AudioManager.instance.PlaySFX(randomSound);
+        }
 
         readyToFire = false;
         float3 shootingDirection = normalize(CalculateDirectionAndSpread());

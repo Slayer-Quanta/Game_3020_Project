@@ -10,8 +10,8 @@ public class PlayerMovement : MonoBehaviour
     private InputSystem_Actions inputActions;
 
     [Header("Movement Settings")]
-    public float speed = 8f; 
-    public float gravity = -19.6f; 
+    public float speed = 8f;  
+    public float gravity = -19.6f;  
     public float jumpheight = 3f;
 
     [Header("Ground Check")]
@@ -22,7 +22,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Dash Settings")]
     public float dashForce = 15f;  
     public float dashDuration = 0.2f;
-    public float momentumDecay = 8f;
+    public float momentumDecay = 8f; 
+    public float dashGroundForce = 5f; 
     private bool isDashing = false;
     private float dashTimer = 0f;
     private float3 dashDirection;
@@ -31,6 +32,8 @@ public class PlayerMovement : MonoBehaviour
     [Header("Jetpack Settings")]
     public float jetpackBoostForce = 20f; 
     public float jetpackHorizontalBoost = 0.5f;
+    public float jetpackCooldown = 2f;  
+    private float jetpackCooldownTimer = 0f;
 
     private Vector2 movementInput;
     private bool jumpPressed;
@@ -68,7 +71,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         controller = GetComponent<CharacterController>();
-        lastPosition = (float3)transform.position;  
+        lastPosition = (float3)transform.position;
     }
 
     void Update()
@@ -79,6 +82,11 @@ public class PlayerMovement : MonoBehaviour
         if (isGrounded && velocity.y < 0f)
         {
             velocity.y = -2f;
+        }
+
+        if (jetpackCooldownTimer > 0f)
+        {
+            jetpackCooldownTimer -= Time.deltaTime;
         }
 
         HandleDash();
@@ -112,6 +120,7 @@ public class PlayerMovement : MonoBehaviour
         highJumpPressed = true;
     }
 
+
     void HandleJump()
     {
         if (jumpPressed && isGrounded)
@@ -119,9 +128,10 @@ public class PlayerMovement : MonoBehaviour
             velocity.y = sqrt(jumpheight * -2f * gravity);
         }
 
-        if (highJumpPressed)
+        if (highJumpPressed && jetpackCooldownTimer <= 0f)
         {
             PerformJetpackBoost();
+            jetpackCooldownTimer = jetpackCooldown; 
         }
     }
 
@@ -165,17 +175,25 @@ public class PlayerMovement : MonoBehaviour
 
     void PerformDash()
     {
+        float3 horizontalForward = normalize(new float3(transform.forward.x, 0f, transform.forward.z));
+        float3 horizontalRight = normalize(new float3(transform.right.x, 0f, transform.right.z));
+
         if (length(movementInput) < 0.1f)
         {
-            dashDirection = (float3)transform.forward;
+            dashDirection = horizontalForward;
         }
         else
         {
-            dashDirection = normalize((float3)transform.right * movementInput.x + (float3)transform.forward * movementInput.y);
+            dashDirection = normalize(horizontalRight * movementInput.x + horizontalForward * movementInput.y);
         }
 
         isDashing = true;
         dashTimer = dashDuration;
+
+        if (!isGrounded)
+        {
+            velocity.y = min(velocity.y, -dashGroundForce);
+        }
     }
 
     void HandleMovement()
@@ -191,5 +209,15 @@ public class PlayerMovement : MonoBehaviour
             float3 totalMovement = (move * speed + dashMomentum) * Time.deltaTime;
             controller.Move(totalMovement);
         }
+    }
+
+    public bool IsJetpackOnCooldown()
+    {
+        return jetpackCooldownTimer > 0f;
+    }
+
+    public float GetJetpackCooldownTime()
+    {
+        return max(0f, jetpackCooldownTimer);
     }
 }
